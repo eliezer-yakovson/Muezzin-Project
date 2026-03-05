@@ -1,0 +1,5 @@
+fastapi
+confluent-kafka
+Pillow
+uvicorn
+python-multipart
