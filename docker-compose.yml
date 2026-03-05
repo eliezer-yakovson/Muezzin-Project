@@ -29,6 +29,19 @@ services:
       - mongo
       - elasticsearch
 
+  stt_service:
+    build:
+      context: .
+      dockerfile: stt_service/Dockerfile
+    volumes:
+      - ./data:/data
+    environment:
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+      - ELASTICSEARCH_URL=http://elasticsearch:9200
+    depends_on:
+      - kafka
+      - elasticsearch
+
   kafka:
     image: confluentinc/cp-kafka:7.8.3
     container_name: kafka
