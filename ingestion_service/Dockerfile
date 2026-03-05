@@ -2,11 +2,12 @@ FROM python:3.10-slim
 
 WORKDIR /app
 
-COPY requirements.txt ./
+COPY ingestion_service/requirements.txt ./
 RUN apt-get update && apt-get install -y tesseract-ocr
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY . .
+COPY common/ ./common/
+COPY ingestion_service/main.py ./
 
 EXPOSE 8000
 

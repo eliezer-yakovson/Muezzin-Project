@@ -1,13 +1,17 @@
 import os
 import json
-import logging
 from pathlib import Path
 from fastapi import FastAPI
 from confluent_kafka import Producer
+from common.logger import Logger
 
 app = FastAPI()
 
-logging.basicConfig(level=logging.INFO)
+logging = Logger.get_logger(
+    name="ingestion_service",
+    es_host=os.getenv("ELASTICSEARCH_URL", "http://elasticsearch:9200"),
+    index="app_logs"
+)
 
 
 producer = Producer({

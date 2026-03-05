@@ -1,13 +1,17 @@
 import os
 import json
-import logging
 import hashlib
 from confluent_kafka import Consumer
 from pymongo import MongoClient
 from gridfs import GridFS
 from elasticsearch import Elasticsearch
+from common.logger import Logger
 
-logging.basicConfig(level=logging.INFO)
+logging = Logger.get_logger(
+    name="data_transfer",
+    es_host=os.getenv("ELASTICSEARCH_URL", "http://elasticsearch:9200"),
+    index="app_logs"
+)
 
 # MongoDB 
 client = MongoClient(os.getenv("MONGODB_URI", "mongodb://mongo:27017"))
