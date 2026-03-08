@@ -4,6 +4,7 @@ import hashlib
 import speech_recognition as sr
 from confluent_kafka import Consumer
 from elasticsearch import Elasticsearch
+from common.bds_analyzer import analyze_transcription
 from common.logger import Logger
 
 logging = Logger.get_logger(
@@ -45,12 +46,22 @@ while True:
         with sr.AudioFile(file_path) as source:
             audio = recognizer.record(source)
         transcription = recognizer.recognize_google(audio)
+        analysis_result = analyze_transcription(transcription)
         logging.info(f"Transcription for {metadata['file_name']}: {transcription}")
 
         es.update(
             index="podcasts_metadata",
             id=unique_id,
-            body={"doc": {"transcription": transcription}}
+            body={
+                "doc": {
+                    "transcription": transcription,
+                    "bds_percent": analysis_result["bds_percent"],
+                    "is_bds": analysis_result["is_bds"],
+                    "bds_threat_level": analysis_result["bds_threat_level"],
+                    "bds_matches": analysis_result["bds_matches"],
+                },
+                "doc_as_upsert": True,
+            }
         )
         logging.info(f"Updated ES document {unique_id} with transcription.")
 
